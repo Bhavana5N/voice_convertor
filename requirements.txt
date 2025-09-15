@@ -1,0 +1,9 @@
+flask
+werkzeug
+pydub
+whisper
+librosa
+soundfile
+numpy
+docx
+PyPDF2

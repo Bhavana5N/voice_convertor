@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Transcription & Document Processing</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Audio Transcription Hub</h1>
+            <p>Convert voice recordings, audio files, and documents to text</p>
+        </div>
+
+        <div class="main-content">
+            <!-- File Upload Panel -->
+            <div class="panel">
+                <h2>📁 File Upload</h2>
+                
+                <div class="upload-zone" id="uploadZone">
+                    <input type="file" id="fileInput" multiple accept=".mp3,.wav,.m4a,.mp4,.txt,.pdf,.docx,.zip">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">Drop files here or click to browse</div>
+                    <div class="supported-formats">
+                        Supports: MP3, WAV, M4A, MP4, TXT, PDF, DOCX, ZIP
+                    </div>
+                </div>
+
+                <div class="file-list" id="fileList"></div>
+                
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <button class="process-btn" id="processBtn" disabled>
+                    🚀 Process Files
+                </button>
+            </div>
+
+            <!-- Voice Recorder Panel -->
+            <div class="panel">
+                <h2>🎤 Voice Recorder</h2>
+                
+                <div class="voice-recorder">
+                    <div class="recorder-status status-idle" id="recorderStatus">
+                        Ready to record. Click the microphone to start.
+                    </div>
+                    
+                    <div class="mic-controls">
+                        <button class="mic-button" id="micButton">🎤</button>
+                    </div>
+                    
+                    <select id="languageSelect" class="language-select">
+                        <option value="en-US">English (US)</option>
+                        <option value="en-GB">English (UK)</option>
+                        <option value="es-ES">Spanish</option>
+                        <option value="fr-FR">French</option>
+                        <option value="de-DE">German</option>
+                        <option value="it-IT">Italian</option>
+                        <option value="pt-BR">Portuguese (BR)</option>
+                        <option value="ja-JP">Japanese</option>
+                        <option value="ko-KR">Korean</option>
+                        <option value="zh-CN">Chinese (Simplified)</option>
+                        <option value="ar-SA">Arabic</option>
+                        <option value="hi-IN">Hindi</option>
+                        <option value="ru-RU">Russian</option>
+                    </select>
+                    
+                    <div class="recorder-controls">
+                        <button class="control-btn" id="pauseBtn" disabled>⏸️ Pause</button>
+                        <button class="control-btn" id="resumeBtn" disabled>▶️ Resume</button>
+                        <button class="control-btn" id="stopBtn" disabled>⏹️ Stop</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="panel results-panel">
+            <h2>📄 Results</h2>
+            
+            <div class="message-container">
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+            </div>
+            
+            <div class="transcript-container">
+                <textarea id="transcriptArea" class="transcript-area" placeholder="Transcribed text will appear here..."></textarea>
+                
+                <div class="transcript-stats" id="transcriptStats">
+                    <span class="word-count">Words: 0</span>
+                    <span class="char-count">Characters: 0</span>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-btn primary" id="copyBtn">📋 Copy Text</button>
+                <button class="action-btn" id="downloadBtn">💾 Download TXT</button>
+                <button class="action-btn" id="downloadAllBtn">📦 Download All</button>
+                <button class="action-btn" id="speakBtn">🔊 Read Aloud</button>
+                <button class="action-btn secondary" id="clearBtn">🗑️ Clear All</button>
+            </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="panel settings-panel">
+            <h2>⚙️ Settings</h2>
+            
+            <div class="setting-group">
+                <label for="autoSave">Auto-save transcripts</label>
+                <input type="checkbox" id="autoSave" checked>
+            </div>
+            
+            <div class="setting-group">
+                <label for="timestampFormat">Include timestamps</label>
+                <select id="timestampFormat">
+                    <option value="none">None</option>
+                    <option value="simple">[HH:MM:SS]</option>
+                    <option value="detailed">[YYYY-MM-DD HH:MM:SS]</option>
+                </select>
+            </div>
+            
+            <div class="setting-group">
+                <label for="confidenceThreshold">Confidence Threshold</label>
+                <input type="range" id="confidenceThreshold" min="0" max="1" step="0.1" value="0.8">
+                <span id="confidenceValue">0.8</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Visualization Canvas -->
+    <canvas id="visualizer" class="visualizer"></canvas>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Processing files...</div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
