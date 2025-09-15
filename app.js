@@ -374,11 +374,12 @@ class AudioTranscriptionHub {
     isValidFile(file) {
         const supportedTypes = [
             'audio/mpeg', 'audio/wav', 'audio/mp4', 'audio/x-m4a', 'audio/webm',
+            'audio/wav', 'audio/mp4',
             'text/plain', 'application/pdf',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'application/zip', 'application/x-zip-compressed'
         ];
-        
+
         const supportedExtensions = [
             '.mp3', '.wav', '.m4a', '.mp4', '.webm', '.ogg',
             '.txt', '.pdf', '.docx', '.zip'
@@ -764,29 +765,6 @@ Contents of "${file.name}" would be extracted and processed individually.`);
         }
         
         const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-        const filename = `transcript_${timestamp}.txt`;
-        
-        this.downloadTextFile(text, filename);
-        this.showSuccess('Transcript downloaded successfully!');
-    }
-    
-    downloadAllFiles() {
-        if (this.processedFiles.size === 0) {
-            this.showError('No processed files to download.');
-            return;
-        }
-        
-        let combinedContent = `Audio Transcription Hub - Batch Export\nGenerated: ${new Date().toLocaleString()}\n`;
-        combinedContent += '='.repeat(60) + '\n\n';
-        
-        for (let [id, fileData] of this.processedFiles) {
-            combinedContent += `File: ${fileData.name}\n`;
-            combinedContent += `Processed: ${fileData.timestamp.toLocaleString()}\n`;
-            combinedContent += '-'.repeat(40) + '\n';
-            combinedContent += fileData.content + '\n\n';
-        }
-        
-        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
         const filename = `all_transcripts_${timestamp}.txt`;
         
         this.downloadTextFile(combinedContent, filename);
@@ -1087,89 +1065,6 @@ ${content}`;
     }
 }
 
-// Add API endpoint URL here
-const API_URL = 'https://your-backend-url/api/upload';
-
-const uploadForm = document.getElementById('uploadForm');
-const fileInput = document.getElementById('fileInput');
-const resultDiv = document.getElementById('result');
-
-// Client-side JS for TXT, PDF, DOCX
-function readTextFile(file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        resultDiv.textContent = e.target.result;
-    };
-    reader.readAsText(file);
-}
-
-function readPDFFile(file) {
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-        const pdfjsLib = window['pdfjs-dist/build/pdf'];
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        const typedarray = new Uint8Array(e.target.result);
-        const pdf = await pdfjsLib.getDocument({data: typedarray}).promise;
-        let text = '';
-        for (let i = 0; i < pdf.numPages; i++) {
-            const page = await pdf.getPage(i + 1);
-            const content = await page.getTextContent();
-            text += content.items.map(item => item.str).join(' ') + '\n';
-        }
-        resultDiv.textContent = text;
-    };
-    reader.readAsArrayBuffer(file);
-}
-
-function readDocxFile(file) {
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-        const arrayBuffer = e.target.result;
-        const mammoth = window.mammoth;
-        const result = await mammoth.convertToHtml({arrayBuffer});
-        resultDiv.innerHTML = result.value;
-    };
-    reader.readAsArrayBuffer(file);
-}
-
-uploadForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const file = fileInput.files[0];
-    if (!file) {
-        resultDiv.textContent = 'Please select a file.';
-        return;
-    }
-    const ext = file.name.split('.').pop().toLowerCase();
-    if (ext === 'txt') {
-        readTextFile(file);
-    } else if (ext === 'pdf') {
-        readPDFFile(file);
-    } else if (ext === 'docx') {
-        readDocxFile(file);
-    } else {
-        // For audio/zip or advanced processing, use Python backend
-        resultDiv.textContent = 'Processing on server...';
-        const formData = new FormData();
-        formData.append('file', file);
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-            if (data.result) {
-                resultDiv.textContent = data.result;
-            } else if (data.error) {
-                resultDiv.textContent = 'Error: ' + data.error;
-            } else {
-                resultDiv.textContent = 'Unknown response.';
-            }
-        } catch (err) {
-            resultDiv.textContent = 'Failed to connect to backend.';
-        }
-    }
-});
-
 // Utility functions for global access
 window.app = null;
 
@@ -1213,6 +1108,11 @@ window.addEventListener('beforeunload', () => {
 });
 
 // Export for module systems (if needed)
+// Export for module systems (if needed)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = AudioTranscriptionHub;
 }
+
+// Fix misplaced code for downloadTranscript and downloadAllFiles
+// downloadTranscript should be inside the class, not after the export
+// downloadAllFiles should be inside the class, not after the export
